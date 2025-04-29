@@ -26,11 +26,11 @@ public class App {
                 history[j] = H1[rand.nextInt(H1.length)];
             }
         patients.add(new PatientRecords(i, rand.nextInt(70)+1, "Patient"+i, history));
-        App app = new App();
-        app.Menu(patients);
+
     }
     
-
+    App app = new App();
+    app.Menu(patients);
 
 
     }
@@ -44,7 +44,7 @@ public class App {
         switch(val){
             case 1:
             PatientRecords patient = new PatientRecords(1029091,30,"John Doe",new String[]{"easd"});
-            patient.Patient_Menu();
+            patient.Patient_Menu(patients);
 
             break;
             case 2:
