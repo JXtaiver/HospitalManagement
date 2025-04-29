@@ -5,15 +5,17 @@ import java.util.Random;
 public class App {
     Scanner scan = new Scanner(System.in);
     public void Menu(){
-        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management");
+        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val  = scan.nextInt();
-        if(val>3 || val<1){
+        if(val>4 || val<1){
             System.out.println("Invalid Input, Try again.");
             Menu();
         }
         switch(val){
             case 1:
-            
+            PatientRecords patient = new PatientRecords(1029091,30,"John Doe",new String[]{"easd"});
+            patient.Patient_Menu();
+
             break;
             case 2:
 
@@ -21,6 +23,9 @@ public class App {
             case 3:
 
             break;
+            case 4:
+            System.out.println("Exiting the program...");
+            return;
         }
     }
     public static void main(String[] args) throws Exception {
