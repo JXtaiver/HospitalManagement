@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 
 public class ApScheduling {
     private static class Appointment {
@@ -68,7 +69,7 @@ public class ApScheduling {
 
     // Cancel by name 
     public void cancelByName(String name) {
-        
+
         for (Appointment a : emergencyQueue) {
             if (a.name.equals(name)) {
                 emergencyQueue.remove(a);
@@ -125,5 +126,58 @@ public class ApScheduling {
                 " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
         }
     }
-}
+     static Scanner scan = new Scanner(System.in);
+
+     public void ApScheduling_menu() {
+        while (true) {
+            System.out.println("\nAppointment Scheduling Menu:");
+            System.out.println("1. Book appointment");
+            System.out.println("2. Show current appointments");
+            System.out.println("3. Cancel appointment by earliest");
+            System.out.println("4. Cancel appointment by name");
+            System.out.println("5. Return to main menu");
+            System.out.print("Enter your choice: ");
+
+            int choice = scan.nextInt();
+            scan.nextLine(); // Consume newline
+    
+            switch (choice) {
+                case 1:
+                System.out.print("Enter patient name: ");
+                String name = scan.nextLine();
+                System.out.print("Enter doctor ID: ");
+                String doctorId = scan.nextLine();
+                System.out.print("Enter time slot: ");
+                String timeSlot = scan.nextLine();
+                System.out.print("Is this an emergency? (yes/no): ");
+                String emergency = scan.nextLine();
+                
+                if (emergency.equalsIgnoreCase("yes")) {
+                    bookEmergency(name, doctorId, timeSlot);
+                } else {
+                    book(name, doctorId, timeSlot);
+                }
+                break;
+                case 2:
+                    showAppointments();
+                    break;
+                case 3:
+                    cancel();
+                    break;
+                case 4:
+                    System.out.print("Enter the patient's name to cancel: ");
+                    String cancelName = scan.nextLine();
+                    cancelByName(cancelName);
+
+                    break;
+                case 5:
+                    System.out.println("Returning to main menu...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+                    break;
+            }
+        }
+    }
+}    
 
