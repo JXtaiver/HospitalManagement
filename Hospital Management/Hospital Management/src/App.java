@@ -3,8 +3,28 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class App {
+    Scanner scan = new Scanner(System.in);
+    public void Menu(){
+        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management");
+        int val  = scan.nextInt();
+        if(val>3 || val<1){
+            System.out.println("Invalid Input, Try again.");
+            Menu();
+        }
+        switch(val){
+            case 1:
+            
+            break;
+            case 2:
+
+            break;
+            case 3:
+
+            break;
+        }
+    }
     public static void main(String[] args) throws Exception {
-        Scanner scan = new Scanner(System.in);
+       
         //Create patient Records Dynamic Array
         ArrayList<PatientRecords> patients = new ArrayList<>();
         Random rand = new Random();
