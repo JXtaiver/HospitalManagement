@@ -1,5 +1,21 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ApScheduling {
-    private String[] queue;
+    private static class Appointment {
+        String name;
+        String doctorId;
+        String timeSlot;
+
+        public Appointment(String name, String doctorId, String timeSlot) {
+            this.name = name;
+            this.doctorId = doctorId;
+            this.timeSlot = timeSlot;
+        }
+    }
+
+    private Appointment[] normalQueue;
+    private Queue<Appointment> emergencyQueue;
     private int front;
     private int back;
     private int size;
@@ -7,48 +23,66 @@ public class ApScheduling {
 
     public ApScheduling(int capacity) {
         this.capacity = capacity;
-        queue = new String[capacity];
-        front = 0;
-        back = -1;
-        size = 0;
+        this.normalQueue = new Appointment[capacity];
+        this.emergencyQueue = new LinkedList<>();
+        this.front = 0;
+        this.back = -1;
+        this.size = 0;
     }
 
-    // Book
-    public void book(String name) {
+    // Book normal appointment
+    public void book(String name, String doctorId, String timeSlot) {
         if (size == capacity) {
-            System.out.println("No openings. Cannot book more appointments.");
+            System.out.println("No openings. Cannot book more normal appointments.");
             return;
         }
         back = (back + 1) % capacity;
-        queue[back] = name;
+        normalQueue[back] = new Appointment(name, doctorId, timeSlot);
         size++;
         System.out.println("Appointment booked for: " + name);
     }
 
-    // Cancel oldest
-    public void cancel() {
-        if (size == 0) {
-            System.out.println("No appointments to cancel.");
-            return;
-        }
-        System.out.println("Cancelled appointment for: " + queue[front]);
-        queue[front] = null;
-        front = (front + 1) % capacity;
-        size--;
+    // Book emergency appointment
+    public void bookEmergency(String name, String doctorId, String timeSlot) {
+        emergencyQueue.add(new Appointment(name, doctorId, timeSlot));
+        System.out.println("EMERGENCY appointment booked for: " + name);
     }
 
-    // Cancel person's appointment by name
-    public void cancelByName(String name) {
+    // Cancel the earliest appointment
+    public void cancel() {
+        if (!emergencyQueue.isEmpty()) {
+            Appointment a = emergencyQueue.poll();
+            System.out.println("Cancelled EMERGENCY appointment for: " + a.name);
+            return;
+        }
         if (size == 0) {
             System.out.println("No appointments to cancel.");
             return;
         }
+        Appointment a = normalQueue[front];
+        normalQueue[front] = null;
+        front = (front + 1) % capacity;
+        size--;
+        System.out.println("Cancelled appointment for: " + a.name);
+    }
 
+    // Cancel by name 
+    public void cancelByName(String name) {
+        
+        for (Appointment a : emergencyQueue) {
+            if (a.name.equals(name)) {
+                emergencyQueue.remove(a);
+                System.out.println("Cancelled EMERGENCY appointment for: " + name);
+                return;
+            }
+        }
+
+        // normal queue
         int index = -1;
         for (int i = 0; i < size; i++) {
-            int currentIndex = (front + i) % capacity;
-            if (queue[currentIndex] != null && queue[currentIndex].equals(name)) {
-                index = currentIndex;
+            int current = (front + i) % capacity;
+            if (normalQueue[current] != null && normalQueue[current].name.equals(name)) {
+                index = current;
                 break;
             }
         }
@@ -59,26 +93,37 @@ public class ApScheduling {
         }
 
         for (int i = index; i != back; i = (i + 1) % capacity) {
-            int nextIndex = (i + 1) % capacity;
-            queue[i] = queue[nextIndex];
+            int next = (i + 1) % capacity;
+            normalQueue[i] = normalQueue[next];
         }
-        queue[back] = null;
+        normalQueue[back] = null;
         back = (back - 1 + capacity) % capacity;
         size--;
 
         System.out.println("Cancelled appointment for: " + name);
     }
 
-    //current appointments
-    public void ShowAppointments() {
-        if (size == 0) {
+    // priority queue
+    public void showAppointments() {
+        if (emergencyQueue.isEmpty() && size == 0) {
             System.out.println("No appointments scheduled.");
             return;
         }
+
         System.out.println("Current appointments:");
+
+        int count = 1;
+        for (Appointment a : emergencyQueue) {
+            System.out.println(count++ + ". [EMERGENCY] " + a.name +
+                " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
+        }
+
         for (int i = 0; i < size; i++) {
             int index = (front + i) % capacity;
-            System.out.println((i + 1) + ". " + queue[index]);
+            Appointment a = normalQueue[index];
+            System.out.println(count++ + ". " + a.name +
+                " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
         }
     }
 }
+
