@@ -26,19 +26,20 @@ public class App {
                 history[j] = H1[rand.nextInt(H1.length)];
             }
         patients.add(new PatientRecords(i, rand.nextInt(70)+1, "Patient"+i, history));
-        
+        App app = new App();
+        app.Menu(patients);
     }
     
 
 
 
     }
-    public void Menu(){
+    public void Menu(ArrayList<PatientRecords> patients){
         System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val  = scan.nextInt();
         if(val>4 || val<1){
             System.out.println("Invalid Input, Try again.");
-            Menu();
+            Menu(patients);
         }
         switch(val){
             case 1:
@@ -54,7 +55,9 @@ public class App {
             break;
             case 4:
             System.out.println("Exiting the program...");
-            return;
+            System.exit(0);
         }
+    
     }
+    
 }
