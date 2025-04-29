@@ -48,6 +48,9 @@ public class App {
 
             break;
             case 2:
+            ApScheduling scheduler = new ApScheduling(20);
+            scheduler.ApScheduling_menu();
+
 
             break;
             case 3:
