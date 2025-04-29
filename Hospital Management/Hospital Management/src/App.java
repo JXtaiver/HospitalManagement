@@ -4,30 +4,7 @@ import java.util.Random;
 
 public class App {
     Scanner scan = new Scanner(System.in);
-    public void Menu(){
-        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
-        int val  = scan.nextInt();
-        if(val>4 || val<1){
-            System.out.println("Invalid Input, Try again.");
-            Menu();
-        }
-        switch(val){
-            case 1:
-            PatientRecords patient = new PatientRecords(1029091,30,"John Doe",new String[]{"easd"});
-            patient.Patient_Menu();
 
-            break;
-            case 2:
-
-            break;
-            case 3:
-
-            break;
-            case 4:
-            System.out.println("Exiting the program...");
-            return;
-        }
-    }
     public static void main(String[] args) throws Exception {
        
         //Create patient Records Dynamic Array
@@ -51,13 +28,33 @@ public class App {
         patients.add(new PatientRecords(i, rand.nextInt(70)+1, "Patient"+i, history));
         
     }
-    PatientRecords Jake = new PatientRecords(51, 45, "Jake", H1);
+    
 
-    for(PatientRecords p : patients){
-        //Just Testing to see that everything works
-        p.Display_Info(p);
-        
+
+
     }
-    Jake.Update_Info(Jake);
+    public void Menu(){
+        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
+        int val  = scan.nextInt();
+        if(val>4 || val<1){
+            System.out.println("Invalid Input, Try again.");
+            Menu();
+        }
+        switch(val){
+            case 1:
+            PatientRecords patient = new PatientRecords(1029091,30,"John Doe",new String[]{"easd"});
+            patient.Patient_Menu();
+
+            break;
+            case 2:
+
+            break;
+            case 3:
+
+            break;
+            case 4:
+            System.out.println("Exiting the program...");
+            return;
+        }
     }
 }
