@@ -27,12 +27,12 @@ public class App {
         
     }
     PatientRecords Jake = new PatientRecords(51, 45, "Jake", H1);
-   Jake.Update_Info(Jake);
+
     for(PatientRecords p : patients){
         //Just Testing to see that everything works
         p.Display_Info(p);
         
     }
-       
+    Jake.Update_Info(Jake);
     }
 }
