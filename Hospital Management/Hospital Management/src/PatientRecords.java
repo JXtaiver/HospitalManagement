@@ -71,9 +71,9 @@ public class PatientRecords {
     }
     public void Update_Info(PatientRecords p){
         System.out.println("Select an Option");
-        System.out.println("Set Name-1");
-        System.out.println("Set Age-2");
-        System.out.println("Update History-3");
+        System.out.println(" 1: Set Name");
+        System.out.println(" 2: Set Age");
+        System.out.println(" 3: Update History");
         String New;
         int Neww;
         int type = scan.nextInt();
