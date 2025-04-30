@@ -121,7 +121,7 @@ public class PatientRecords {
         System.out.println("History Updated to: "+String.join(", ",hist));
         p.Patient_History=hist;
     }
-    public void Patient_Menu(ArrayList<PatientRecords> patients,HashMap<Integer, DoctorInfo> doctors){
+    public void Patient_Menu(ArrayList<PatientRecords> patients,HashMap<Integer, DoctorInfo> doctors,ApScheduling scheduler){
        System.out.println("\n Select an Option: \n 1: Display Patient List \n 2: Update Patient Info \n 3: Display Patient Info \n 4: Add Patient\n 5: Exit to main menu");
        int type=scan.nextInt();
        switch(type){
@@ -130,7 +130,7 @@ public class PatientRecords {
         for(PatientRecords p : patients){
             System.out.println("Patient ID: "+ p.getID()+ ", Name: "+p.getN());
         }
-        Patient_Menu(patients,doctors);
+        Patient_Menu(patients,doctors,scheduler);
         break;
         case 2:
         System.out.println("Enter Patient ID: ");
@@ -143,7 +143,7 @@ public class PatientRecords {
         } else {
             System.out.println("Patient not found");
         }
-        Patient_Menu(patients,doctors);
+        Patient_Menu(patients,doctors,scheduler);
         break;
         case 3:
         System.out.println("Enter Patient ID: ");
@@ -156,20 +156,20 @@ public class PatientRecords {
         } else {
             System.out.println("Patient not found");
         }
-        Patient_Menu(patients,doctors);
+        Patient_Menu(patients,doctors,scheduler);
         break;
         case 4:
         addp(patients);
-        Patient_Menu(patients,doctors);
+        Patient_Menu(patients,doctors,scheduler);
         break;
         case 5:
         
         System.out.println("Returning to Main Menu....");
-        app.Menu(patients,doctors);
+        app.Menu(patients, doctors,scheduler);
         return;
         default:
         System.out.println("Invalid Option, Try again.");
-        Patient_Menu(patients,doctors);
+        Patient_Menu(patients,doctors,scheduler);
        }
     }
 }
