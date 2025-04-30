@@ -2,7 +2,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.HashMap;
-
+import java.util.ArrayList;
+import java.util.Iterator;
 public class ApScheduling {
     private static class Appointment {
         int patientId;
@@ -24,8 +25,9 @@ public class ApScheduling {
     private int size;
     private int capacity;
     private HashMap<Integer, DoctorInfo> doctors;
+    private ArrayList<PatientRecords> patients;
 
-    public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors) {
+    public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients) {
         this.capacity = capacity;
         this.normalQueue = new Appointment[capacity];
         this.emergencyQueue = new LinkedList<>();
@@ -33,6 +35,7 @@ public class ApScheduling {
         this.back = -1;
         this.size = 0;
         this.doctors = doctors;
+        this.patients = patients;
     }
 
     private boolean hasAppointment(int patientId) {
@@ -66,13 +69,23 @@ public class ApScheduling {
         }
         return false;
     }
-
-    public void book(int patientId, int doctorId, String timeSlot,HashMap<Integer, DoctorInfo> doctors) {
+    private boolean isValidPatientId(int id) {
+        for (PatientRecords p : patients) {
+            if (p.getID() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void book(int patientId, int doctorId, String timeSlot,HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients) {
         if (!doctors.containsKey(doctorId)) {
             System.out.println("Doctor ID not found.");
             return;
         }
-        
+        if (!isValidPatientId(patientId)) {
+            System.out.println("Patient ID not found.");
+            return;
+        }
         if (hasAppointment(patientId)) {
             System.out.println("Patient already has an appointment.");
             return;
@@ -144,14 +157,18 @@ public class ApScheduling {
     }
 
     public void cancelByPatientId(int patientId) {
-        for (Appointment a : emergencyQueue) {
+       
+        Iterator<Appointment> iterator = emergencyQueue.iterator();
+        while (iterator.hasNext()) {
+            Appointment a = iterator.next();
             if (a.patientId == patientId) {
-                emergencyQueue.remove(a);
+                iterator.remove();
                 System.out.println("Cancelled EMERGENCY appointment for Patient ID: " + patientId);
                 return;
             }
         }
-
+    
+      
         int index = -1;
         for (int i = 0; i < size; i++) {
             int current = (front + i) % capacity;
@@ -160,12 +177,13 @@ public class ApScheduling {
                 break;
             }
         }
-
+    
         if (index == -1) {
             System.out.println("Appointment for Patient ID: " + patientId + " not found.");
             return;
         }
-
+    
+    
         for (int i = index; i != back; i = (i + 1) % capacity) {
             int next = (i + 1) % capacity;
             normalQueue[i] = normalQueue[next];
@@ -173,7 +191,7 @@ public class ApScheduling {
         normalQueue[back] = null;
         back = (back - 1 + capacity) % capacity;
         size--;
-
+    
         System.out.println("Cancelled appointment for Patient ID: " + patientId);
     }
 
@@ -199,7 +217,7 @@ public class ApScheduling {
     }
 
     static Scanner scan = new Scanner(System.in);
-
+App app = new App();
     public void ApScheduling_menu() {
         while (true) {
             System.out.println("\nAppointment Scheduling Menu:");
@@ -229,7 +247,7 @@ public class ApScheduling {
                     if (emergency.equalsIgnoreCase("yes")) {
                         bookEmergency(pid, doctorId);
                     } else {
-                        book(pid, doctorId, timeSlot,doctors);
+                        book(pid, doctorId, timeSlot,doctors,patients);
                     }
                     break;
                 case 2:
@@ -245,6 +263,7 @@ public class ApScheduling {
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
+                    app.Menu(patients,doctors);
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
