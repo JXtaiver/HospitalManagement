@@ -65,7 +65,7 @@ public class App {
                 patient.Patient_Menu(patients,doctors);
                 break;
             case 2:
-                ApScheduling scheduler = new ApScheduling(20);
+                ApScheduling scheduler = new ApScheduling(20,doctors);
                 scheduler.ApScheduling_menu();
                 break;
             case 3:
