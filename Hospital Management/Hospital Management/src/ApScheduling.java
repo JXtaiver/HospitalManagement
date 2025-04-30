@@ -26,8 +26,9 @@ public class ApScheduling {
     private int capacity;
     private HashMap<Integer, DoctorInfo> doctors;
     private ArrayList<PatientRecords> patients;
+    private App app;
 
-    public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients) {
+    public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients, App app) {
         this.capacity = capacity;
         this.normalQueue = new Appointment[capacity];
         this.emergencyQueue = new LinkedList<>();
@@ -36,8 +37,10 @@ public class ApScheduling {
         this.size = 0;
         this.doctors = doctors;
         this.patients = patients;
+        this.app = app; 
     }
 
+  
     private boolean hasAppointment(int patientId) {
         for (Appointment a : emergencyQueue) {
             if (a.patientId == patientId) return true;
@@ -199,7 +202,6 @@ public class ApScheduling {
     }
 
     static Scanner scan = new Scanner(System.in);
-    App app = new App();
 
     public void ApScheduling_menu() {
         while (true) {
@@ -247,7 +249,7 @@ public class ApScheduling {
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
-                    app.Menu(patients, doctors);
+                    app.Menu(patients, doctors); 
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
