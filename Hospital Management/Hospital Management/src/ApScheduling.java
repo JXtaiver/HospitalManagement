@@ -4,12 +4,12 @@ import java.util.Scanner;
 
 public class ApScheduling {
     private static class Appointment {
-        String name;
+        int patientId;
         String doctorId;
         String timeSlot;
 
-        public Appointment(String name, String doctorId, String timeSlot) {
-            this.name = name;
+        public Appointment(int patientId, String doctorId, String timeSlot) {
+            this.patientId = patientId;
             this.doctorId = doctorId;
             this.timeSlot = timeSlot;
         }
@@ -31,29 +31,74 @@ public class ApScheduling {
         this.size = 0;
     }
 
-    // Book normal appointment
-    public void book(String name, String doctorId, String timeSlot) {
+    private boolean hasAppointment(int patientId) {
+        for (Appointment a : emergencyQueue) {
+            if (a.patientId == patientId) return true;
+        }
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % capacity;
+            if (normalQueue[index].patientId == patientId) return true;
+        }
+        return false;
+    }
+
+    private boolean isTimeSlotTaken(String timeSlot) {
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % capacity;
+            if (normalQueue[index].timeSlot != null && normalQueue[index].timeSlot.equals(timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isDoctorBooked(String doctorId, String timeSlot) {
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % capacity;
+            Appointment a = normalQueue[index];
+            if (a.doctorId.equals(doctorId) && a.timeSlot.equals(timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void book(int patientId, String doctorId, String timeSlot) {
+        if (hasAppointment(patientId)) {
+            System.out.println("Patient already has an appointment.");
+            return;
+        }
+        if (isTimeSlotTaken(timeSlot)) {
+            System.out.println("Time slot already taken. Choose another.");
+            return;
+        }
+        if (isDoctorBooked(doctorId, timeSlot)) {
+            System.out.println("Doctor is already booked for this time slot.");
+            return;
+        }
         if (size == capacity) {
             System.out.println("No openings. Cannot book more normal appointments.");
             return;
         }
         back = (back + 1) % capacity;
-        normalQueue[back] = new Appointment(name, doctorId, timeSlot);
+        normalQueue[back] = new Appointment(patientId, doctorId, timeSlot);
         size++;
-        System.out.println("Appointment booked for: " + name);
+        System.out.println("Appointment booked for Patient ID: " + patientId);
     }
 
-    // Book emergency appointment
-    public void bookEmergency(String name, String doctorId, String timeSlot) {
-        emergencyQueue.add(new Appointment(name, doctorId, timeSlot));
-        System.out.println("EMERGENCY appointment booked for: " + name);
+    public void bookEmergency(int patientId, String doctorId) {
+        if (hasAppointment(patientId)) {
+            System.out.println("Patient already has an appointment.");
+            return;
+        }
+        emergencyQueue.add(new Appointment(patientId, doctorId, "EMERGENCY"));
+        System.out.println("EMERGENCY appointment booked for Patient ID: " + patientId);
     }
 
-    // Cancel the earliest appointment
     public void cancel() {
         if (!emergencyQueue.isEmpty()) {
             Appointment a = emergencyQueue.poll();
-            System.out.println("Cancelled EMERGENCY appointment for: " + a.name);
+            System.out.println("Cancelled EMERGENCY appointment for Patient ID: " + a.patientId);
             return;
         }
         if (size == 0) {
@@ -64,32 +109,29 @@ public class ApScheduling {
         normalQueue[front] = null;
         front = (front + 1) % capacity;
         size--;
-        System.out.println("Cancelled appointment for: " + a.name);
+        System.out.println("Cancelled appointment for Patient ID: " + a.patientId);
     }
 
-    // Cancel by name 
-    public void cancelByName(String name) {
-
+    public void cancelByPatientId(int patientId) {
         for (Appointment a : emergencyQueue) {
-            if (a.name.equals(name)) {
+            if (a.patientId == patientId) {
                 emergencyQueue.remove(a);
-                System.out.println("Cancelled EMERGENCY appointment for: " + name);
+                System.out.println("Cancelled EMERGENCY appointment for Patient ID: " + patientId);
                 return;
             }
         }
 
-        // normal queue
         int index = -1;
         for (int i = 0; i < size; i++) {
             int current = (front + i) % capacity;
-            if (normalQueue[current] != null && normalQueue[current].name.equals(name)) {
+            if (normalQueue[current] != null && normalQueue[current].patientId == patientId) {
                 index = current;
                 break;
             }
         }
 
         if (index == -1) {
-            System.out.println("Appointment for " + name + " not found.");
+            System.out.println("Appointment for Patient ID: " + patientId + " not found.");
             return;
         }
 
@@ -101,10 +143,9 @@ public class ApScheduling {
         back = (back - 1 + capacity) % capacity;
         size--;
 
-        System.out.println("Cancelled appointment for: " + name);
+        System.out.println("Cancelled appointment for Patient ID: " + patientId);
     }
 
-    // priority queue
     public void showAppointments() {
         if (emergencyQueue.isEmpty() && size == 0) {
             System.out.println("No appointments scheduled.");
@@ -112,52 +153,53 @@ public class ApScheduling {
         }
 
         System.out.println("Current appointments:");
-
         int count = 1;
         for (Appointment a : emergencyQueue) {
-            System.out.println(count++ + ". [EMERGENCY] " + a.name +
-                " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
+            System.out.println(count++ + ". [EMERGENCY] Patient ID: " + a.patientId +
+                " with Doctor ID: " + a.doctorId);
         }
 
         for (int i = 0; i < size; i++) {
             int index = (front + i) % capacity;
             Appointment a = normalQueue[index];
-            System.out.println(count++ + ". " + a.name +
+            System.out.println(count++ + ". Patient ID: " + a.patientId +
                 " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
         }
     }
-     static Scanner scan = new Scanner(System.in);
 
-     public void ApScheduling_menu() {
+    static Scanner scan = new Scanner(System.in);
+
+    public void ApScheduling_menu() {
         while (true) {
             System.out.println("\nAppointment Scheduling Menu:");
             System.out.println("1. Book appointment");
             System.out.println("2. Show current appointments");
             System.out.println("3. Cancel appointment by earliest");
-            System.out.println("4. Cancel appointment by name");
+            System.out.println("4. Cancel appointment by patient ID");
             System.out.println("5. Return to main menu");
             System.out.print("Enter your choice: ");
 
             int choice = scan.nextInt();
-            scan.nextLine(); // Consume newline
-    
+            scan.nextLine();
+
             switch (choice) {
                 case 1:
-                System.out.print("Enter patient name: ");
-                String name = scan.nextLine();
-                System.out.print("Enter doctor ID: ");
-                String doctorId = scan.nextLine();
-                System.out.print("Enter time slot: ");
-                String timeSlot = scan.nextLine();
-                System.out.print("Is this an emergency? (yes/no): ");
-                String emergency = scan.nextLine();
-                
-                if (emergency.equalsIgnoreCase("yes")) {
-                    bookEmergency(name, doctorId, timeSlot);
-                } else {
-                    book(name, doctorId, timeSlot);
-                }
-                break;
+                    System.out.print("Enter patient ID: ");
+                    int pid = scan.nextInt();
+                    scan.nextLine();
+                    System.out.print("Enter doctor ID: ");
+                    String doctorId = scan.nextLine();
+                    System.out.print("Enter time slot: ");
+                    String timeSlot = scan.nextLine();
+                    System.out.print("Is this an emergency? (yes/no): ");
+                    String emergency = scan.nextLine();
+
+                    if (emergency.equalsIgnoreCase("yes")) {
+                        bookEmergency(pid, doctorId);
+                    } else {
+                        book(pid, doctorId, timeSlot);
+                    }
+                    break;
                 case 2:
                     showAppointments();
                     break;
@@ -165,10 +207,9 @@ public class ApScheduling {
                     cancel();
                     break;
                 case 4:
-                    System.out.print("Enter the patient's name to cancel: ");
-                    String cancelName = scan.nextLine();
-                    cancelByName(cancelName);
-
+                    System.out.print("Enter the patient ID to cancel: ");
+                    int cancelId = scan.nextInt();
+                    cancelByPatientId(cancelId);
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
@@ -179,5 +220,4 @@ public class ApScheduling {
             }
         }
     }
-}    
-
+}
