@@ -62,11 +62,11 @@ public class App {
         switch (val) {
             case 1:
                 PatientRecords patient = new PatientRecords(1029091, 30, "John Doe", new String[]{"easd"});
-                patient.Patient_Menu(patients);
+                patient.Patient_Menu(patients,doctors);
                 break;
             case 2:
                 ApScheduling scheduler = new ApScheduling(20);
-                // scheduler.ApScheduling_menu();
+                scheduler.ApScheduling_menu();
                 break;
             case 3:
                 doctors.get(0).Doctor_Menu(doctors); // open doctor menu using first doctor as reference
