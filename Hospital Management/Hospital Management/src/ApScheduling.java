@@ -1,19 +1,21 @@
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class ApScheduling {
     private static class Appointment {
         int patientId;
-        String doctorId;
+        int doctorId;
         String timeSlot;
 
-        public Appointment(int patientId, String doctorId, String timeSlot) {
+        public Appointment(int patientId, int doctorId, String timeSlot) {
             this.patientId = patientId;
             this.doctorId = doctorId;
             this.timeSlot = timeSlot;
         }
     }
+        DoctorInfo doctors=new DoctorInfo();
 
     private Appointment[] normalQueue;
     private Queue<Appointment> emergencyQueue;
@@ -22,13 +24,14 @@ public class ApScheduling {
     private int size;
     private int capacity;
 
-    public ApScheduling(int capacity) {
+    public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors) {
         this.capacity = capacity;
         this.normalQueue = new Appointment[capacity];
         this.emergencyQueue = new LinkedList<>();
         this.front = 0;
         this.back = -1;
         this.size = 0;
+        this.doctors = doctors;
     }
 
     private boolean hasAppointment(int patientId) {
@@ -52,41 +55,68 @@ public class ApScheduling {
         return false;
     }
 
-    private boolean isDoctorBooked(String doctorId, String timeSlot) {
+    private boolean isDoctorBooked(int doctorId, String timeSlot) {
         for (int i = 0; i < size; i++) {
             int index = (front + i) % capacity;
             Appointment a = normalQueue[index];
-            if (a.doctorId.equals(doctorId) && a.timeSlot.equals(timeSlot)) {
+            if (a.doctorId == doctorId && a.timeSlot.equals(timeSlot)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void book(int patientId, String doctorId, String timeSlot) {
+    public void book(int patientId, int doctorId, String timeSlot) {
+        if (!doctors.containsKey(doctorId)) {
+            System.out.println("Doctor ID not found.");
+            return;
+        }
+        
         if (hasAppointment(patientId)) {
             System.out.println("Patient already has an appointment.");
             return;
         }
+        
         if (isTimeSlotTaken(timeSlot)) {
             System.out.println("Time slot already taken. Choose another.");
             return;
         }
+        
         if (isDoctorBooked(doctorId, timeSlot)) {
             System.out.println("Doctor is already booked for this time slot.");
             return;
         }
+
+        DoctorInfo doc = doctors.get(doctorId);
+        boolean available = false;
+        for (String slot : doc.availability) {
+            if (slot.equals(timeSlot)) {
+                available = true;
+                break;
+            }
+        }
+        if (!available) {
+            System.out.println("Doctor is not available at this time slot.");
+            return;
+        }
+
         if (size == capacity) {
             System.out.println("No openings. Cannot book more normal appointments.");
             return;
         }
+        
         back = (back + 1) % capacity;
         normalQueue[back] = new Appointment(patientId, doctorId, timeSlot);
         size++;
         System.out.println("Appointment booked for Patient ID: " + patientId);
     }
 
-    public void bookEmergency(int patientId, String doctorId) {
+    public void bookEmergency(int patientId, int doctorId) {
+        if (!doctors.containsKey(doctorId)) {
+            System.out.println("Doctor ID not found.");
+            return;
+        }
+
         if (hasAppointment(patientId)) {
             System.out.println("Patient already has an appointment.");
             return;
@@ -188,7 +218,8 @@ public class ApScheduling {
                     int pid = scan.nextInt();
                     scan.nextLine();
                     System.out.print("Enter doctor ID: ");
-                    String doctorId = scan.nextLine();
+                    int doctorId = scan.nextInt();
+                    scan.nextLine();
                     System.out.print("Enter time slot: ");
                     String timeSlot = scan.nextLine();
                     System.out.print("Is this an emergency? (yes/no): ");
@@ -221,3 +252,4 @@ public class ApScheduling {
         }
     }
 }
+
