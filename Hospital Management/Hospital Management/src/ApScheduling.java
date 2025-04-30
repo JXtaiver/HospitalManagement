@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 public class ApScheduling {
     private static class Appointment {
         int patientId;
@@ -16,7 +17,6 @@ public class ApScheduling {
             this.timeSlot = timeSlot;
         }
     }
-        
 
     private Appointment[] normalQueue;
     private Queue<Appointment> emergencyQueue;
@@ -49,16 +49,6 @@ public class ApScheduling {
         return false;
     }
 
-    private boolean isTimeSlotTaken(String timeSlot) {
-        for (int i = 0; i < size; i++) {
-            int index = (front + i) % capacity;
-            if (normalQueue[index].timeSlot != null && normalQueue[index].timeSlot.equals(timeSlot)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean isDoctorBooked(int doctorId, String timeSlot) {
         for (int i = 0; i < size; i++) {
             int index = (front + i) % capacity;
@@ -69,6 +59,7 @@ public class ApScheduling {
         }
         return false;
     }
+
     private boolean isValidPatientId(int id) {
         for (PatientRecords p : patients) {
             if (p.getID() == id) {
@@ -77,7 +68,8 @@ public class ApScheduling {
         }
         return false;
     }
-    public void book(int patientId, int doctorId, String timeSlot,HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients) {
+
+    public void book(int patientId, int doctorId, String timeSlot) {
         if (!doctors.containsKey(doctorId)) {
             System.out.println("Doctor ID not found.");
             return;
@@ -90,12 +82,6 @@ public class ApScheduling {
             System.out.println("Patient already has an appointment.");
             return;
         }
-        
-        if (isTimeSlotTaken(timeSlot)) {
-            System.out.println("Time slot already taken. Choose another.");
-            return;
-        }
-        
         if (isDoctorBooked(doctorId, timeSlot)) {
             System.out.println("Doctor is already booked for this time slot.");
             return;
@@ -103,7 +89,7 @@ public class ApScheduling {
 
         DoctorInfo doc = doctors.get(doctorId);
         boolean available = false;
-        for (String slot : doc.availability) {
+        for (String slot : doc.getAvailability()) {
             if (slot.equals(timeSlot)) {
                 available = true;
                 break;
@@ -118,7 +104,7 @@ public class ApScheduling {
             System.out.println("No openings. Cannot book more normal appointments.");
             return;
         }
-        
+
         back = (back + 1) % capacity;
         normalQueue[back] = new Appointment(patientId, doctorId, timeSlot);
         size++;
@@ -130,7 +116,6 @@ public class ApScheduling {
             System.out.println("Doctor ID not found.");
             return;
         }
-
         if (hasAppointment(patientId)) {
             System.out.println("Patient already has an appointment.");
             return;
@@ -157,7 +142,6 @@ public class ApScheduling {
     }
 
     public void cancelByPatientId(int patientId) {
-       
         Iterator<Appointment> iterator = emergencyQueue.iterator();
         while (iterator.hasNext()) {
             Appointment a = iterator.next();
@@ -167,8 +151,7 @@ public class ApScheduling {
                 return;
             }
         }
-    
-      
+
         int index = -1;
         for (int i = 0; i < size; i++) {
             int current = (front + i) % capacity;
@@ -177,13 +160,12 @@ public class ApScheduling {
                 break;
             }
         }
-    
+
         if (index == -1) {
             System.out.println("Appointment for Patient ID: " + patientId + " not found.");
             return;
         }
-    
-    
+
         for (int i = index; i != back; i = (i + 1) % capacity) {
             int next = (i + 1) % capacity;
             normalQueue[i] = normalQueue[next];
@@ -191,7 +173,7 @@ public class ApScheduling {
         normalQueue[back] = null;
         back = (back - 1 + capacity) % capacity;
         size--;
-    
+
         System.out.println("Cancelled appointment for Patient ID: " + patientId);
     }
 
@@ -205,19 +187,20 @@ public class ApScheduling {
         int count = 1;
         for (Appointment a : emergencyQueue) {
             System.out.println(count++ + ". [EMERGENCY] Patient ID: " + a.patientId +
-                " with Doctor ID: " + a.doctorId);
+                    " with Doctor ID: " + a.doctorId);
         }
 
         for (int i = 0; i < size; i++) {
             int index = (front + i) % capacity;
             Appointment a = normalQueue[index];
             System.out.println(count++ + ". Patient ID: " + a.patientId +
-                " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
+                    " with Doctor ID: " + a.doctorId + " at " + a.timeSlot);
         }
     }
 
     static Scanner scan = new Scanner(System.in);
-App app = new App();
+    App app = new App();
+
     public void ApScheduling_menu() {
         while (true) {
             System.out.println("\nAppointment Scheduling Menu:");
@@ -239,15 +222,16 @@ App app = new App();
                     System.out.print("Enter doctor ID: ");
                     int doctorId = scan.nextInt();
                     scan.nextLine();
+                    System.out.println("Doctor's availability: " + String.join(", ", doctors.get(doctorId).getAvailability()));
                     System.out.print("Enter time slot: ");
                     String timeSlot = scan.nextLine();
                     System.out.print("Is this an emergency? (yes/no): ");
                     String emergency = scan.nextLine();
 
-                    if (emergency.equalsIgnoreCase("yes")) {
+                    if (emergency.trim().equalsIgnoreCase("yes")) {
                         bookEmergency(pid, doctorId);
                     } else {
-                        book(pid, doctorId, timeSlot,doctors,patients);
+                        book(pid, doctorId, timeSlot);
                     }
                     break;
                 case 2:
@@ -263,7 +247,7 @@ App app = new App();
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
-                    app.Menu(patients,doctors);
+                    app.Menu(patients, doctors);
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
