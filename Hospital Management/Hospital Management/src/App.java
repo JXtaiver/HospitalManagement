@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class App {
     Scanner scan = new Scanner(System.in);
-    ApScheduling scheduler; 
+    ApScheduling scheduler;  // Declare ApScheduling object
 
     public static void main(String[] args) throws Exception {
         // Create patient Records Dynamic Array
@@ -43,29 +43,71 @@ public class App {
             doctors.put(i, new DoctorInfo(i, fullName, times, specialization));
         }
 
-        
+        // Create App instance and initialize the scheduler
         App app = new App();
-        app.scheduler = new ApScheduling(20, doctors, patients,app);
-        app.Menu(patients, doctors);
+        app.scheduler = new ApScheduling(20, doctors, patients, app);  
+
+       
+      
+            app.Menu(patients, doctors);
     }
 
+    public void Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors,ApScheduling scheduler) {
+        System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
+        int val = scan.nextInt();
+        if (val > 4 || val < 1) {
+            System.out.println("Invalid Input, Try again.");
+            Menu(patients, doctors,scheduler);
+        }
+        switch (val) {
+            case 1:
+                PatientRecords patient = new PatientRecords(1029091, 30, "John Doe", new String[]{"easd"});
+                patient.Patient_Menu(patients, doctors,scheduler);
+                break;
+            case 2:
+                if (scheduler != null) {  // Ensure scheduler is not null before calling ApScheduling_menu
+                    scheduler.ApScheduling_menu(scheduler);
+                } else {
+                    System.out.println("Scheduler is not properly initialized.");
+                }
+                break;
+            case 3:
+                if (!doctors.isEmpty()) {
+                    doctors.get(0).Doctor_Menu(patients, doctors,scheduler);
+                } else {
+                    System.out.println("No doctors available.");
+                }
+                break;
+            case 4:
+                System.out.println("Exiting the program...");
+                System.exit(0);
+        }
+    }
     public void Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors) {
         System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val = scan.nextInt();
         if (val > 4 || val < 1) {
             System.out.println("Invalid Input, Try again.");
-            Menu(patients, doctors);
+            Menu(patients, doctors,scheduler);
         }
         switch (val) {
             case 1:
                 PatientRecords patient = new PatientRecords(1029091, 30, "John Doe", new String[]{"easd"});
-                patient.Patient_Menu(patients, doctors);
+                patient.Patient_Menu(patients, doctors,scheduler);
                 break;
             case 2:
-                scheduler.ApScheduling_menu();
+                if (scheduler != null) {  // Ensure scheduler is not null before calling ApScheduling_menu
+                    scheduler.ApScheduling_menu(scheduler);
+                } else {
+                    System.out.println("Scheduler is not properly initialized.");
+                }
                 break;
             case 3:
-                doctors.get(0).Doctor_Menu(patients, doctors);
+                if (!doctors.isEmpty()) {
+                    doctors.get(0).Doctor_Menu(patients, doctors,scheduler);
+                } else {
+                    System.out.println("No doctors available.");
+                }
                 break;
             case 4:
                 System.out.println("Exiting the program...");
