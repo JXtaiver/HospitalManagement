@@ -40,7 +40,7 @@ public class ApScheduling {
         this.app = app; 
     }
 
-  
+   
     private boolean hasAppointment(int patientId) {
         for (Appointment a : emergencyQueue) {
             if (a.patientId == patientId) return true;
@@ -203,7 +203,7 @@ public class ApScheduling {
 
     static Scanner scan = new Scanner(System.in);
 
-    public void ApScheduling_menu() {
+    public void ApScheduling_menu(ApScheduling scheduler) {
         while (true) {
             System.out.println("\nAppointment Scheduling Menu:");
             System.out.println("1. Book appointment");
@@ -249,7 +249,7 @@ public class ApScheduling {
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
-                    app.Menu(patients, doctors); 
+                    app.Menu(patients, doctors,scheduler); 
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
