@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -33,8 +34,8 @@ public class DoctorInfo {
         }
         System.out.println();
     }
-
-    public void Doctor_Menu(HashMap<Integer, DoctorInfo> doctors) {
+    App app = new App();
+    public void Doctor_Menu(ArrayList<PatientRecords> patients,HashMap<Integer, DoctorInfo> doctors) {
         while (true) {
             System.out.println("\n Select an Option: ");
             System.out.println(" 1: Display Doctor List");
@@ -79,6 +80,7 @@ public class DoctorInfo {
 
                 case 4:
                     System.out.println("Returning to Main Menu...");
+                    app.Menu(patients,doctors);
                     return;
 
                 default:
@@ -87,5 +89,4 @@ public class DoctorInfo {
         }
     }
 }
-
 
