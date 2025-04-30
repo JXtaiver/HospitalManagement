@@ -69,7 +69,7 @@ public class App {
                 scheduler.ApScheduling_menu();
                 break;
             case 3:
-                doctors.get(0).Doctor_Menu(doctors); // open doctor menu using first doctor as reference
+                doctors.get(0).Doctor_Menu(patients,doctors); // open doctor menu using first doctor as reference
                 break;
             case 4:
                 System.out.println("Exiting the program...");
