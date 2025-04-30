@@ -16,6 +16,10 @@ public class DoctorInfo {
         this.specialization = specialization;
     }
 
+    public String[] getAvailability() {
+        return availability;
+    }
+
     public String getSpecialization() {
         return specialization;
     }
@@ -34,8 +38,9 @@ public class DoctorInfo {
         }
         System.out.println();
     }
+
     App app = new App();
-    public void Doctor_Menu(ArrayList<PatientRecords> patients,HashMap<Integer, DoctorInfo> doctors) {
+    public void Doctor_Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors) {
         while (true) {
             System.out.println("\n Select an Option: ");
             System.out.println(" 1: Display Doctor List");
@@ -80,7 +85,7 @@ public class DoctorInfo {
 
                 case 4:
                     System.out.println("Returning to Main Menu...");
-                    app.Menu(patients,doctors);
+                    app.Menu(patients, doctors);
                     return;
 
                 default:
@@ -89,4 +94,3 @@ public class DoctorInfo {
         }
     }
 }
-
