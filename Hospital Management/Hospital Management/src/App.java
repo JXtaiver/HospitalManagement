@@ -6,7 +6,7 @@ public class App {
     Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) throws Exception {
-
+        
         //Create patient Records Dynamic Array
         ArrayList<PatientRecords> patients = new ArrayList<>();
         Random rand = new Random();
@@ -30,7 +30,7 @@ public class App {
         }
         // Create DoctorInfo HashMap
         HashMap<Integer, DoctorInfo> doctors = new HashMap<>();
-        String[] allTimes = {"9AM", "10AM", "11AM", "1PM", "2PM", "3PM"};
+        String[] allTimes = {"12AM","1AM","2AM","3AM","4AM","5AM","6AM","7AM","8AM","9AM","10AM","11AM","12PM","1PM","2PM","3PM","4PM","5PM","6PM","7PM","8PM","9PM","10PM","11PM"};
         String[] firstNames = {"John", "Emily", "Michael", "Sarah", "David", "Laura", "James", "Olivia"};
         String[] lastNames = {"Smith", "Johnson", "Brown", "Garcia", "Lee", "Patel", "Martinez", "Anderson"};
         String[] specializations = {"Cardiology", "Neurology", "Pediatrics", "Orthopedics", "Dermatology", "Oncology", "Psychiatry"};
@@ -38,7 +38,7 @@ public class App {
         for (int i = 0; i < 50; i++) {
             String fullName = "Dr. " + firstNames[rand.nextInt(firstNames.length)] + " " + lastNames[rand.nextInt(lastNames.length)];
 
-            int numSlots = 2 + rand.nextInt(2); // 2–3 time slots
+            int numSlots = 2 + rand.nextInt(8); 
             String[] times = new String[numSlots];
             for (int j = 0; j < numSlots; j++) {
                 times[j] = allTimes[rand.nextInt(allTimes.length)];
@@ -50,9 +50,11 @@ public class App {
 
         App app = new App();
         app.Menu(patients, doctors);
+        
     }
 
     public void Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors) {
+        
         System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val = scan.nextInt();
         if (val > 4 || val < 1) {
@@ -65,7 +67,7 @@ public class App {
                 patient.Patient_Menu(patients,doctors);
                 break;
             case 2:
-                ApScheduling scheduler = new ApScheduling(20,doctors);
+            ApScheduling scheduler = new ApScheduling(20, doctors, patients);
                 scheduler.ApScheduling_menu();
                 break;
             case 3:
