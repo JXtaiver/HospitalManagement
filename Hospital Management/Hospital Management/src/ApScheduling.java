@@ -15,7 +15,7 @@ public class ApScheduling {
             this.timeSlot = timeSlot;
         }
     }
-        DoctorInfo doctors=new DoctorInfo();
+        
 
     private Appointment[] normalQueue;
     private Queue<Appointment> emergencyQueue;
@@ -23,6 +23,7 @@ public class ApScheduling {
     private int back;
     private int size;
     private int capacity;
+    private HashMap<Integer, DoctorInfo> doctors;
 
     public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors) {
         this.capacity = capacity;
@@ -66,7 +67,7 @@ public class ApScheduling {
         return false;
     }
 
-    public void book(int patientId, int doctorId, String timeSlot) {
+    public void book(int patientId, int doctorId, String timeSlot,HashMap<Integer, DoctorInfo> doctors) {
         if (!doctors.containsKey(doctorId)) {
             System.out.println("Doctor ID not found.");
             return;
@@ -228,7 +229,7 @@ public class ApScheduling {
                     if (emergency.equalsIgnoreCase("yes")) {
                         bookEmergency(pid, doctorId);
                     } else {
-                        book(pid, doctorId, timeSlot);
+                        book(pid, doctorId, timeSlot,doctors);
                     }
                     break;
                 case 2:
@@ -252,4 +253,3 @@ public class ApScheduling {
         }
     }
 }
-
