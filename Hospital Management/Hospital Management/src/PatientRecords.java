@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Random;
-
+//initialize patient attributes
 public class PatientRecords {
     App app = new App();
     static Scanner scan = new Scanner(System.in);
@@ -11,12 +11,30 @@ public class PatientRecords {
     String Patient_Name;
     String[] Patient_History;
     Random rand = new Random();
-    
+    //Patient Constructor
     public PatientRecords(int ID,int Age,String Name,String[]History){
         this.Patient_History=History;
         this.Age=Age;
         this.Patient_Name=Name;
         this.Patient_ID=ID;
+    }
+    //Patient Methods
+    public void searchPatientByName(ArrayList<PatientRecords> patients) {
+        System.out.println("Enter the name to search: ");
+        scan.nextLine(); // consume any leftover newline
+        String nameToSearch = scan.nextLine().toLowerCase();
+        boolean found = false;
+    
+        for (PatientRecords p : patients) {
+            if (p.getN().toLowerCase().contains(nameToSearch)) {
+                Display_Info(p);
+                found = true;
+            }
+        }
+    
+        if (!found) {
+            System.out.println("No patient found with the name: " + nameToSearch);
+        }
     }
     public void addp(ArrayList<PatientRecords> patients){
         System.out.println("Enter Name of patient");
@@ -38,7 +56,7 @@ public class PatientRecords {
         String[]sl = histo.toArray(new String[0]);
         int age = 0;
         System.out.println("Enter Patient Age: ");
-        if(scan.hasNextInt()){
+        if(scan.hasNextInt()&&scan.nextInt()>0){
             age = scan.nextInt();
             scan.nextLine();
         }else{
@@ -55,8 +73,14 @@ public class PatientRecords {
         System.out.println("Patient name updated");
     }
     public void setA(int Age){
+        if(Age>0){
         this.Age=Age;
         System.out.println("Patient age updated");
+        }
+        else{
+            System.out.println("Invalid Age");
+            return;
+        }
     }
     public int getID(){
         return Patient_ID;
@@ -121,8 +145,9 @@ public class PatientRecords {
         System.out.println("History Updated to: "+String.join(", ",hist));
         p.Patient_History=hist;
     }
+    //Full patient Menu
     public void Patient_Menu(ArrayList<PatientRecords> patients,HashMap<Integer, DoctorInfo> doctors,ApScheduling scheduler){
-       System.out.println("\n Select an Option: \n 1: Display Patient List \n 2: Update Patient Info \n 3: Display Patient Info \n 4: Add Patient\n 5: Exit to main menu");
+       System.out.println("\n Select an Option: \n 1: Display Patient List \n 2: Update Patient Info \n 3: Display Patient Info \n 4: Add Patient\n 5: Search Patient by name\n 6: Exit to main menu");
        int type=scan.nextInt();
        switch(type){
         case 1:
@@ -163,6 +188,10 @@ public class PatientRecords {
         Patient_Menu(patients,doctors,scheduler);
         break;
         case 5:
+        searchPatientByName(patients);
+        Patient_Menu(patients,doctors,scheduler);
+        break;
+        case 6:
         
         System.out.println("Returning to Main Menu....");
         app.Menu(patients, doctors,scheduler);
