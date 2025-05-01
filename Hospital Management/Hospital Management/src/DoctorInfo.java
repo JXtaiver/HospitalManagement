@@ -1,21 +1,21 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-
+//Initialize doctor attributes
 public class DoctorInfo {
     private int doctorID;
     private String doctorName;
     private String[] availability;
     private String specialization;
     static Scanner scan = new Scanner(System.in);
-
+//Doctor Constructor
     public DoctorInfo(int doctorID, String doctorName, String[] availability, String specialization) {
         this.doctorID = doctorID;
         this.doctorName = doctorName;
         this.availability = availability;
         this.specialization = specialization;
     }
-
+//Doctor Methods
     public String[] getAvailability() {
         return availability;
     }
@@ -38,7 +38,7 @@ public class DoctorInfo {
         }
         System.out.println();
     }
-
+//Initializing App in doctor info for use in menu
     App app = new App();
     public void Doctor_Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors,ApScheduling Scheduler) {
         while (true) {
