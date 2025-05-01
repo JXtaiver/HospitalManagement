@@ -15,7 +15,7 @@ public class App {
         // Medical history prompts
         String[] H1 = {"Flu", "Asthma", "Diabetes", "Tuberculosis", "Headache", "Allergies"};
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 501; i++) {
             int numDiseases = rand.nextInt(3) + 1;
             String[] history = new String[numDiseases];
             for (int j = 0; j < numDiseases; j++) {
@@ -32,7 +32,7 @@ public class App {
         String[] lastNames = {"Smith", "Johnson", "Brown", "Garcia", "Lee", "Patel", "Martinez", "Anderson"};
         String[] specializations = {"Cardiology", "Neurology", "Pediatrics", "Orthopedics", "Dermatology", "Oncology", "Psychiatry"};
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 51; i++) {
             String fullName = "Dr. " + firstNames[rand.nextInt(firstNames.length)] + " " + lastNames[rand.nextInt(lastNames.length)];
             int numSlots = 2 + rand.nextInt(8);
             String[] times = new String[numSlots];
@@ -51,7 +51,7 @@ public class App {
       
             app.Menu(patients, doctors);
     }
-
+//Full main menu
     public void Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors,ApScheduling scheduler) {
         System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val = scan.nextInt();
@@ -83,6 +83,7 @@ public class App {
                 System.exit(0);
         }
     }
+    //Overloaded constructor in order to handle scheduler case  
     public void Menu(ArrayList<PatientRecords> patients, HashMap<Integer, DoctorInfo> doctors) {
         System.out.println("Select an Option: \n 1: Patient Management. \n 2: Appointment Scheduling \n 3: Doctor Management \n 4: Exit the program");
         int val = scan.nextInt();
