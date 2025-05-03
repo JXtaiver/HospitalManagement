@@ -1,25 +1,39 @@
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
+
 public class ApScheduling {
-    private static class Appointment {
+    private static class Appointment implements Comparable<Appointment> {
         int patientId;
         int doctorId;
         String timeSlot;
+        int severityLevel;
 
         public Appointment(int patientId, int doctorId, String timeSlot) {
+            this(patientId, doctorId, timeSlot, 0);
+        }
+
+        public Appointment(int patientId, int doctorId, String timeSlot, int severityLevel) {
             this.patientId = patientId;
             this.doctorId = doctorId;
             this.timeSlot = timeSlot;
+            this.severityLevel = severityLevel;
+        }
+
+        @Override
+        public int compareTo(Appointment other) {
+            return Integer.compare(other.severityLevel, this.severityLevel); // Higher severity first
         }
     }
 
     private Appointment[] normalQueue;
-    private Queue<Appointment> emergencyQueue;
+    private PriorityQueue<Appointment> emergencyQueue;
     private int front;
     private int back;
     private int size;
@@ -31,16 +45,15 @@ public class ApScheduling {
     public ApScheduling(int capacity, HashMap<Integer, DoctorInfo> doctors, ArrayList<PatientRecords> patients, App app) {
         this.capacity = capacity;
         this.normalQueue = new Appointment[capacity];
-        this.emergencyQueue = new LinkedList<>();
+        this.emergencyQueue = new PriorityQueue<>();
         this.front = 0;
         this.back = -1;
         this.size = 0;
         this.doctors = doctors;
         this.patients = patients;
-        this.app = app; 
+        this.app = app;
     }
 
-   
     private boolean hasAppointment(int patientId) {
         for (Appointment a : emergencyQueue) {
             if (a.patientId == patientId) return true;
@@ -91,13 +104,7 @@ public class ApScheduling {
         }
 
         DoctorInfo doc = doctors.get(doctorId);
-        boolean available = false;
-        for (String slot : doc.getAvailability()) {
-            if (slot.equals(timeSlot)) {
-                available = true;
-                break;
-            }
-        }
+        boolean available = Arrays.asList(doc.getAvailability()).contains(timeSlot);
         if (!available) {
             System.out.println("Doctor is not available at this time slot.");
             return;
@@ -114,17 +121,22 @@ public class ApScheduling {
         System.out.println("Appointment booked for Patient ID: " + patientId);
     }
 
-    public void bookEmergency(int patientId, int doctorId) {
+    public void bookEmergency(int patientId, int doctorId, int severityLevel) {
         if (!doctors.containsKey(doctorId)) {
             System.out.println("Doctor ID not found.");
+            return;
+        }
+        if (!isValidPatientId(patientId)) {
+            System.out.println("Patient ID not found.");
             return;
         }
         if (hasAppointment(patientId)) {
             System.out.println("Patient already has an appointment.");
             return;
         }
-        emergencyQueue.add(new Appointment(patientId, doctorId, "EMERGENCY"));
-        System.out.println("EMERGENCY appointment booked for Patient ID: " + patientId);
+
+        emergencyQueue.add(new Appointment(patientId, doctorId, "EMERGENCY", severityLevel));
+        System.out.println("EMERGENCY appointment booked for Patient ID: " + patientId + " with severity " + severityLevel);
     }
 
     public void cancel() {
@@ -188,9 +200,12 @@ public class ApScheduling {
 
         System.out.println("Current appointments:");
         int count = 1;
-        for (Appointment a : emergencyQueue) {
+
+        PriorityQueue<Appointment> copy = new PriorityQueue<>(emergencyQueue);
+        while (!copy.isEmpty()) {
+            Appointment a = copy.poll();
             System.out.println(count++ + ". [EMERGENCY] Patient ID: " + a.patientId +
-                    " with Doctor ID: " + a.doctorId);
+                    " with Doctor ID: " + a.doctorId + " | Severity: " + a.severityLevel);
         }
 
         for (int i = 0; i < size; i++) {
@@ -231,7 +246,10 @@ public class ApScheduling {
                     String emergency = scan.nextLine();
 
                     if (emergency.trim().equalsIgnoreCase("yes")) {
-                        bookEmergency(pid, doctorId);
+                        System.out.print("Enter severity level (1-10): ");
+                        int severity = scan.nextInt();
+                        scan.nextLine();
+                        bookEmergency(pid, doctorId, severity);
                     } else {
                         book(pid, doctorId, timeSlot);
                     }
@@ -249,7 +267,7 @@ public class ApScheduling {
                     break;
                 case 5:
                     System.out.println("Returning to main menu...");
-                    app.Menu(patients, doctors,scheduler); 
+                    app.Menu(patients, doctors, scheduler);
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
